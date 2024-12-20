@@ -139,7 +139,36 @@ Graph* GraphCreateTranspose(const Graph* g) {
 
   // COMPLETE THE CODE
 
-  return NULL;
+  // Criar um grafo com os mesmos vértices
+  Graph* transpose = GraphCreate(g->numVertices, g->isDigraph, g->isWeighted);
+
+  // Iterar sobre todos os vertices do grafo de origem começando pelo primeiro da lista
+  List* vertices = g->verticesList;
+  ListMoveToHead(vertices);
+
+  for (unsigned int i = 0; i < g->numVertices; i++) {
+    struct _Vertex* vertex = ListGetCurrentItem(vertices);
+
+    // Itera pela lista das arestas desse vertice
+    List* edges = vertex->edgesList;
+    ListMoveToHead(edges);
+
+    for (unsigned int j = 0; j < ListGetSize(edges); j++) {
+      struct _Edge* edge = ListGetCurrentItem(edges);
+
+      // Encontra o sentido da aresta original
+      unsigned int from = vertex->id;
+      unsigned int to = edge->adjVertex;
+
+      // Troca a ordem da direção da aresta
+      GraphAddEdge(transpose, to, from);
+
+      // Passa para a proxima aresta
+      ListMoveToNext(edges);
+    }
+
+    // Passa para o proximo vertice
+    ListMoveToNext(vertices);
 }
 
 void GraphDestroy(Graph** p) {
