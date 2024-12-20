@@ -169,6 +169,9 @@ Graph* GraphCreateTranspose(const Graph* g) {
 
     // Passa para o proximo vertice
     ListMoveToNext(vertices);
+  }
+
+  return transpose;
 }
 
 void GraphDestroy(Graph** p) {
