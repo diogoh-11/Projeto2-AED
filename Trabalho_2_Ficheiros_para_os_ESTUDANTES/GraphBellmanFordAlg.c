@@ -86,50 +86,57 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   unsigned int idAdjacentVertice; // id of one os the vertices adjante to the vertice
   int unChange;                   // check if the iteracion made any changes
   unsigned int *adjantesinfo;
+
+  // create an array if the vertex to iterate always starting in the staring vertex
+  unsigned int vertices[numVertices];
+  vertices[0] = startVertex;
+  unsigned int index = 1;
+  for (unsigned int v = 0; v < numVertices; v++)
+  {
+    if (v != startVertex)
+    {
+      vertices[index++] = v;
+    }
+  }
+
   for (unsigned int j = 0; j < numVertices - 1; j++)
   {
     adjantesinfo = GraphGetAdjacentsTo(g, startVertex);
     // first time lopping will always be in the startVertex
     unChange = 0;
-    for (unsigned int v = 0; v < numVertices + 1; v++)
+    for (unsigned int v = 0; v < numVertices; v++)
     {
-      // First iteracion will be forced to be  the startvertex
-      vertice = (v == 0) ? startVertex : v - 1;
-      printf("Vertice in use: %d\n ", vertice);
-
-      // it was already done
-      if (v - 1 == startVertex && startVertex != 0)
-      {
-        printf("Vertice in use: %d==%d end \n", vertice, startVertex);
-        continue;
-      }
+      vertice = vertices[v];
+      // printf("Using the vertice: %d \n", vertice);
+      //  if there is no path to this vertice skip iteracion
       if (result->marked[vertice] == 0)
       {
-        printf("There is no path to this vertice: %d end \n", vertice);
+        // printf("There is no path to this vertice: %d end \n", vertice);
         continue;
       }
+      // information about the adhacent vertices
+      adjantesinfo = GraphGetAdjacentsTo(g, vertice);
 
       numbAdjacentsTo = adjantesinfo[0];
-      printf("Number of adjacents vertices: %d\n", numbAdjacentsTo);
+      // printf("Number of adjacents vertices: %d\n", numbAdjacentsTo);
       for (unsigned int adjacents = 1; adjacents <= numbAdjacentsTo; adjacents++)
       {
         // get the id of the adjancent vertice
         idAdjacentVertice = adjantesinfo[adjacents];
-        // mark the vertice as 1
-        printf("vertice working on : %d\n", idAdjacentVertice);
+        // mark the vertice as visit
+
+        // printf("vertice working on : %d\n", idAdjacentVertice);
         result->marked[idAdjacentVertice] = 1;
+        // change the cost if the new is lower than the past one
         if (result->distance[idAdjacentVertice] > result->distance[vertice] + 1 || result->distance[idAdjacentVertice] == -1)
         {
-          printf("Changing dist on vertice : %d\n", idAdjacentVertice);
+          // printf("Changing dist on vertice : %d\n", idAdjacentVertice);
           result->predecessor[idAdjacentVertice] = vertice;
           unChange = 1;
           result->distance[idAdjacentVertice] = result->distance[vertice] + 1;
         }
       }
-      // updating the information fot the next loop
-      adjantesinfo = GraphGetAdjacentsTo(g, v);
     }
-    // if it wasnt change nothing in the iteration end loop whe are at final result
     free(adjantesinfo);
     if (unChange == 0)
     {
