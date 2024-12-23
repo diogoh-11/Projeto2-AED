@@ -23,24 +23,26 @@
 #include "IntegersStack.h"
 #include "instrumentation.h"
 
-struct _GraphBellmanFordAlg {
-  unsigned int* marked;  // To mark vertices when reached for the first time
-  int* distance;  // The number of edges on the path from the start vertex
-                  // distance[i]=-1, if no path found from the start vertex to i
-  int* predecessor;  // The predecessor vertex in the shortest path
-                     // predecessor[i]=-1, if no predecessor exists
-  Graph* graph;
-  unsigned int startVertex;  // The root of the shortest-paths tree
+struct _GraphBellmanFordAlg
+{
+  unsigned int *marked; // To mark vertices when reached for the first time
+  int *distance;        // The number of edges on the path from the start vertex
+                        // distance[i]=-1, if no path found from the start vertex to i
+  int *predecessor;     // The predecessor vertex in the shortest path
+                        // predecessor[i]=-1, if no predecessor exists
+  Graph *graph;
+  unsigned int startVertex; // The root of the shortest-paths tree
 };
 
-GraphBellmanFordAlg* GraphBellmanFordAlgExecute(Graph* g,
-                                                unsigned int startVertex) {
+GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
+                                                unsigned int startVertex)
+{
   assert(g != NULL);
   assert(startVertex < GraphGetNumVertices(g));
   assert(GraphIsWeighted(g) == 0);
 
-  GraphBellmanFordAlg* result =
-      (GraphBellmanFordAlg*)malloc(sizeof(struct _GraphBellmanFordAlg));
+  GraphBellmanFordAlg *result =
+      (GraphBellmanFordAlg *)malloc(sizeof(struct _GraphBellmanFordAlg));
   assert(result != NULL);
 
   // Given graph and start vertex for the shortest-paths
@@ -48,7 +50,6 @@ GraphBellmanFordAlg* GraphBellmanFordAlgExecute(Graph* g,
   result->startVertex = startVertex;
 
   unsigned int numVertices = GraphGetNumVertices(g);
-
   //
   // TO BE COMPLETED !!
   //
@@ -59,20 +60,90 @@ GraphBellmanFordAlg* GraphBellmanFordAlgExecute(Graph* g,
   //
 
   // Mark all vertices as not yet visited, i.e., ZERO
-  
   // No vertex has (yet) a (valid) predecessor
-  
   // No vertex has (yet) a (valid) distance to the start vertex
-  
+
+  // inicialize the arrays
+  result->predecessor = (int *)malloc(sizeof(int) * numVertices);
+  result->marked = (unsigned int *)malloc(sizeof(unsigned int) * numVertices);
+  result->distance = (int *)malloc(sizeof(int) * numVertices);
+  for (unsigned int m = 0; m < numVertices; m++)
+  {
+    // incialize the starting values
+    result->marked[m] = 0;
+    result->distance[m] = -1;
+    result->predecessor[m] = -1;
+  }
+
   // THE ALGORTIHM TO BUILD THE SHORTEST-PATHS TREE
 
-  return NULL;
+  result->distance[startVertex] = 0;
+  result->marked[startVertex] = 1;
+
+  // variables that will be needed
+  unsigned int vertice;           // vertice working on
+  unsigned int numbAdjacentsTo;   // numb the vertices adjance to the vertice
+  unsigned int idAdjacentVertice; // id of one os the vertices adjante to the vertice
+  int unChange;                   // check if the iteracion made any changes
+  unsigned int *adjantesinfo;
+  for (unsigned int j = 0; j < numVertices - 1; j++)
+  {
+    adjantesinfo = GraphGetAdjacentsTo(g, startVertex);
+    // first time lopping will always be in the startVertex
+    unChange = 0;
+    for (unsigned int v = 0; v < numVertices + 1; v++)
+    {
+      // First iteracion will be forced to be  the startvertex
+      vertice = (v == 0) ? startVertex : v - 1;
+      printf("Vertice in use: %d\n ", vertice);
+
+      // it was already done
+      if (v - 1 == startVertex && startVertex != 0)
+      {
+        printf("Vertice in use: %d==%d end \n", vertice, startVertex);
+        continue;
+      }
+      if (result->marked[vertice] == 0)
+      {
+        printf("There is no path to this vertice: %d end \n", vertice);
+        continue;
+      }
+
+      numbAdjacentsTo = adjantesinfo[0];
+      printf("Number of adjacents vertices: %d\n", numbAdjacentsTo);
+      for (unsigned int adjacents = 1; adjacents <= numbAdjacentsTo; adjacents++)
+      {
+        // get the id of the adjancent vertice
+        idAdjacentVertice = adjantesinfo[adjacents];
+        // mark the vertice as 1
+        printf("vertice working on : %d\n", idAdjacentVertice);
+        result->marked[idAdjacentVertice] = 1;
+        if (result->distance[idAdjacentVertice] > result->distance[vertice] + 1 || result->distance[idAdjacentVertice] == -1)
+        {
+          printf("Changing dist on vertice : %d\n", idAdjacentVertice);
+          result->predecessor[idAdjacentVertice] = vertice;
+          unChange = 1;
+          result->distance[idAdjacentVertice] = result->distance[vertice] + 1;
+        }
+      }
+      // updating the information fot the next loop
+      adjantesinfo = GraphGetAdjacentsTo(g, v);
+    }
+    // if it wasnt change nothing in the iteration end loop whe are at final result
+    free(adjantesinfo);
+    if (unChange == 0)
+    {
+      break;
+    }
+  }
+  return result;
 }
 
-void GraphBellmanFordAlgDestroy(GraphBellmanFordAlg** p) {
+void GraphBellmanFordAlgDestroy(GraphBellmanFordAlg **p)
+{
   assert(*p != NULL);
 
-  GraphBellmanFordAlg* aux = *p;
+  GraphBellmanFordAlg *aux = *p;
 
   free(aux->marked);
   free(aux->predecessor);
@@ -84,32 +155,37 @@ void GraphBellmanFordAlgDestroy(GraphBellmanFordAlg** p) {
 
 // Getting the paths information
 
-int GraphBellmanFordAlgReached(const GraphBellmanFordAlg* p, unsigned int v) {
+int GraphBellmanFordAlgReached(const GraphBellmanFordAlg *p, unsigned int v)
+{
   assert(p != NULL);
   assert(v < GraphGetNumVertices(p->graph));
 
   return p->marked[v];
 }
 
-int GraphBellmanFordAlgDistance(const GraphBellmanFordAlg* p, unsigned int v) {
+int GraphBellmanFordAlgDistance(const GraphBellmanFordAlg *p, unsigned int v)
+{
   assert(p != NULL);
   assert(v < GraphGetNumVertices(p->graph));
 
   return p->distance[v];
 }
-Stack* GraphBellmanFordAlgPathTo(const GraphBellmanFordAlg* p, unsigned int v) {
+Stack *GraphBellmanFordAlgPathTo(const GraphBellmanFordAlg *p, unsigned int v)
+{
   assert(p != NULL);
   assert(v < GraphGetNumVertices(p->graph));
 
-  Stack* s = StackCreate(GraphGetNumVertices(p->graph));
+  Stack *s = StackCreate(GraphGetNumVertices(p->graph));
 
-  if (p->marked[v] == 0) {
+  if (p->marked[v] == 0)
+  {
     return s;
   }
 
   // Store the path
   for (unsigned int current = v; current != p->startVertex;
-       current = p->predecessor[current]) {
+       current = p->predecessor[current])
+  {
     StackPush(s, current);
   }
 
@@ -120,13 +196,15 @@ Stack* GraphBellmanFordAlgPathTo(const GraphBellmanFordAlg* p, unsigned int v) {
 
 // DISPLAYING on the console
 
-void GraphBellmanFordAlgShowPath(const GraphBellmanFordAlg* p, unsigned int v) {
+void GraphBellmanFordAlgShowPath(const GraphBellmanFordAlg *p, unsigned int v)
+{
   assert(p != NULL);
   assert(v < GraphGetNumVertices(p->graph));
 
-  Stack* s = GraphBellmanFordAlgPathTo(p, v);
+  Stack *s = GraphBellmanFordAlgPathTo(p, v);
 
-  while (StackIsEmpty(s) == 0) {
+  while (StackIsEmpty(s) == 0)
+  {
     printf("%d ", StackPop(s));
   }
 
@@ -134,20 +212,23 @@ void GraphBellmanFordAlgShowPath(const GraphBellmanFordAlg* p, unsigned int v) {
 }
 
 // Display the Shortest-Paths Tree in DOT format
-void GraphBellmanFordAlgDisplayDOT(const GraphBellmanFordAlg* p) {
+void GraphBellmanFordAlgDisplayDOT(const GraphBellmanFordAlg *p)
+{
   assert(p != NULL);
 
-  Graph* original_graph = p->graph;
+  Graph *original_graph = p->graph;
   unsigned int num_vertices = GraphGetNumVertices(original_graph);
 
   // The paths tree is a digraph, with no edge weights
-  Graph* paths_tree = GraphCreate(num_vertices, 1, 0);
+  Graph *paths_tree = GraphCreate(num_vertices, 1, 0);
 
   // Use the predecessors array to add the tree edges
-  for (unsigned int w = 0; w < num_vertices; w++) {
+  for (unsigned int w = 0; w < num_vertices; w++)
+  {
     // Vertex w has a predecessor vertex v?
     int v = p->predecessor[w];
-    if (v != -1) {
+    if (v != -1)
+    {
       GraphAddEdge(paths_tree, (unsigned int)v, w);
     }
   }
