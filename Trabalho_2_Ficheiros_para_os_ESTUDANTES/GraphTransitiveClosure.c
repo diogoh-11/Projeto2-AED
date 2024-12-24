@@ -63,6 +63,7 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
     }
     GraphBellmanFordAlgDestroy(&BF_result);
   }
+  GraphBellmanFordAlgDestroy(&BF_result);
 
   return res;
 }

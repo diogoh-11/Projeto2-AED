@@ -69,14 +69,24 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   result->predecessor = (int *)malloc(sizeof(int) * numVertices);
   result->marked = (unsigned int *)malloc(sizeof(unsigned int) * numVertices);
   result->distance = (int *)malloc(sizeof(int) * numVertices);
+
+  // create an array if the vertex to iterate always starting in the staring vertex
+  unsigned int vertices[numVertices];
+  vertices[0] = startVertex;
+  unsigned int index = 1;
+
   for (unsigned int m = 0; m < numVertices; m++)
   {
     // incialize the starting values
     result->marked[m] = 0;
     result->distance[m] = -1;
     result->predecessor[m] = -1;
+    // Inicialize the array of the vertice
+    if (m != startVertex)
+    {
+      vertices[index++] = m;
+    }
   }
-
   // THE ALGORTIHM TO BUILD THE SHORTEST-PATHS TREE
 
   result->distance[startVertex] = 0;
@@ -94,18 +104,6 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   unsigned int idAdjacentVertice; // id of one os the vertices adjante to the vertice
   int unChange;                   // check if the iteracion made any changes
   unsigned int *adjantesinfo;
-
-  // create an array if the vertex to iterate always starting in the staring vertex
-  unsigned int vertices[numVertices];
-  vertices[0] = startVertex;
-  unsigned int index = 1;
-  for (unsigned int v = 0; v < numVertices; v++)
-  {
-    if (v != startVertex)
-    {
-      vertices[index++] = v;
-    }
-  }
 
   for (unsigned int j = 0; j < numVertices - 1; j++)
   {
