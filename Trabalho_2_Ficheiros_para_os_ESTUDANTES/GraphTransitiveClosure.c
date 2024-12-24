@@ -51,12 +51,14 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
     for (unsigned int v = 0; v < numVertices; v++)
     {
       // check the distance of that vertice
+      // printf("Vertice Starting: %d  Vertice Checking: %d \n", startVertex, v);
       int value = GraphBellmanFordAlgDistance(BF_result, v);
-      // check if the distance is grater than 0
+      // printf("Value: %d\n", value);
+      //  check if the distance is grater than 0
       if (value > 0)
       {
         // add the vertice
-        GraphAddEdge(g, startVertex, v);
+        GraphAddEdge(res, startVertex, v);
       }
     }
     GraphBellmanFordAlgDestroy(&BF_result);
