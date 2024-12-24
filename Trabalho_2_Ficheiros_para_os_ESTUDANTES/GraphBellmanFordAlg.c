@@ -50,6 +50,8 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   result->startVertex = startVertex;
 
   unsigned int numVertices = GraphGetNumVertices(g);
+  unsigned int numEdges = GraphGetNumEdges(g);
+
   //
   // TO BE COMPLETED !!
   //
@@ -79,6 +81,12 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
 
   result->distance[startVertex] = 0;
   result->marked[startVertex] = 1;
+
+  // if the graph doesn have any edge return and avoid wasting time
+  if (numEdges == 0)
+  {
+    return result;
+  }
 
   // variables that will be needed
   unsigned int vertice;           // vertice working on
