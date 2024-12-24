@@ -6,10 +6,10 @@
 // GraphTransitiveClosure - Transitive Closure of a directed graph
 //
 
-// Student Name :
-// Student Number :
-// Student Name :
-// Student Number :
+// Student Name :Luís Tojal
+// Student Number :119636
+// Student Name :Diogo Duarte
+// Student Number : 120482
 
 /*** COMPLETE THE GraphComputeTransitiveClosure FUNCTION ***/
 
@@ -42,12 +42,12 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
   {
     return res;
   }
-
+  GraphBellmanFordAlg *BF_result;
   // for every vertice
   for (unsigned int startVertex = 0; startVertex < numVertices; startVertex++)
   {
     // create a graph using the bellman algorith for that starting vertx
-    GraphBellmanFordAlg *BF_result = GraphBellmanFordAlgExecute(g, startVertex);
+    BF_result = GraphBellmanFordAlgExecute(g, startVertex);
     for (unsigned int v = 0; v < numVertices; v++)
     {
       // check the distance of that vertice

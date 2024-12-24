@@ -6,10 +6,10 @@
 // GraphBellmanFord - Bellman-Ford Algorithm
 //
 
-// Student Name :
-// Student Number :
-// Student Name :
-// Student Number :
+// Student Name :Luís Tojal
+// Student Number :119636
+// Student Name :Diogo Duarte
+// Student Number : 120482
 
 /*** COMPLETE THE GraphBellmanFordAlgExecute FUNCTION ***/
 
