@@ -18,11 +18,9 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "Graph.h"
 #include "IntegersStack.h"
 #include "instrumentation.h"
-
 struct _GraphBellmanFordAlg
 {
   unsigned int *marked; // To mark vertices when reached for the first time
@@ -33,6 +31,7 @@ struct _GraphBellmanFordAlg
   Graph *graph;
   unsigned int startVertex; // The root of the shortest-paths tree
 };
+#define InstrName [0] = "COUNTITERATIONS";
 
 GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
                                                 unsigned int startVertex)
@@ -44,7 +43,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   GraphBellmanFordAlg *result =
       (GraphBellmanFordAlg *)malloc(sizeof(struct _GraphBellmanFordAlg));
   assert(result != NULL);
-
+  InstrReset();
   // Given graph and start vertex for the shortest-paths
   result->graph = g;
   result->startVertex = startVertex;
@@ -77,6 +76,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
 
   for (unsigned int m = 0; m < numVertices; m++)
   {
+    InstrCount[0]++;
     // incialize the starting values
     result->marked[m] = 0;
     result->distance[m] = -1;
@@ -107,11 +107,11 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
 
   for (unsigned int j = 0; j < numVertices - 1; j++)
   {
-    adjantesinfo = GraphGetAdjacentsTo(g, startVertex);
-    // first time lopping will always be in the startVertex
+
     unChange = 0;
     for (unsigned int v = 0; v < numVertices; v++)
     {
+      // first time lopping will always be in the startVertex
       vertice = vertices[v];
       // printf("Using the vertice: %d \n", vertice);
       //  if there is no path to this vertice skip iteracion
@@ -130,7 +130,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
         // get the id of the adjancent vertice
         idAdjacentVertice = adjantesinfo[adjacents];
         // mark the vertice as visit
-
+        InstrCount[0]++;
         // printf("vertice working on : %d\n", idAdjacentVertice);
         result->marked[idAdjacentVertice] = 1;
         // change the cost if the new is lower than the past one
