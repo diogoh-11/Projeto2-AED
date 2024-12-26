@@ -22,12 +22,15 @@
 #include "Graph.h"
 #include "GraphBellmanFordAlg.h"
 #include "instrumentation.h"
+#define InstrName [0] = "COUNTITERATIONS";
 
 // Compute the transitive closure of a directed graph
 // Return the computed transitive closure as a directed graph
 // Use the Bellman-Ford algorithm
 Graph *GraphComputeTransitiveClosure(Graph *g)
 {
+  InstrReset();
+
   assert(g != NULL);
   assert(GraphIsDigraph(g));
   assert(GraphIsWeighted(g) == 0);
@@ -40,6 +43,8 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
   // if the graph doesn have any edge return and avoid wasting time
   if (numEdges == 0)
   {
+    InstrCount[0]++;
+
     return res;
   }
   GraphBellmanFordAlg *BF_result;
@@ -48,12 +53,15 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
   {
     // create a graph using the bellman algorith for that starting vertx
     BF_result = GraphBellmanFordAlgExecute(g, startVertex);
-    for (unsigned int v = 0; v < numVertices; v++){
+    for (unsigned int v = 0; v < numVertices; v++)
+    {
       // check the distance of that vertice
       // printf("Vertice Starting: %d  Vertice Checking: %d \n", startVertex, v);
       int value = GraphBellmanFordAlgDistance(BF_result, v);
       // printf("Value: %d\n", value);
       //  check if the distance is grater than 0
+      InstrCount[0]++;
+
       if (value > 0)
       {
         // add the vertice

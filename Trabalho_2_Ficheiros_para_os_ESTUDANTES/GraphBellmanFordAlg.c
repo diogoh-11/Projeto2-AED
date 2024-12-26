@@ -121,6 +121,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
       //  if there is no path to this vertice skip iteracion
       if (result->marked[vertice] == 0)
       {
+        InstrCount[0]++;
         // printf("There is no path to this vertice: %d end \n", vertice);
         continue;
       }
@@ -136,10 +137,11 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
         // mark the vertice as visit
         InstrCount[0]++;
         // printf("vertice working on : %d\n", idAdjacentVertice);
-        result->marked[idAdjacentVertice] = 1;
+
         // change the cost if the new is lower than the past one
         if (result->distance[idAdjacentVertice] > result->distance[vertice] + 1 || result->distance[idAdjacentVertice] == -1)
         {
+          result->marked[idAdjacentVertice] = 1;
           // printf("Changing dist on vertice : %d\n", idAdjacentVertice);
           result->predecessor[idAdjacentVertice] = vertice;
           unChange = 1;
@@ -150,6 +152,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
     }
     if (unChange == 0)
     {
+      InstrCount[0]++;
       break;
     }
   }
