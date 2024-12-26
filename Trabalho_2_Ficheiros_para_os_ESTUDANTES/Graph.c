@@ -175,7 +175,7 @@ Graph *GraphCreateTranspose(const Graph *g)
     List *edges = vertex->edgesList;
     ListMoveToHead(edges);
 
-    for (unsigned int j = 0; j < ListGetSize(edges); j++)
+    for (int j = 0; j < ListGetSize(edges); j++)
     {
       struct _Edge *edge = ListGetCurrentItem(edges);
 

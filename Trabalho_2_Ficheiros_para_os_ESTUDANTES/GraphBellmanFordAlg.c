@@ -100,7 +100,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
     free(result->marked);
     free(result->distance);
     free(result);
-    return result;
+    return NULL;
   }
 
   // variables that will be needed
