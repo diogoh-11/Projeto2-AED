@@ -48,8 +48,7 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
   {
     // create a graph using the bellman algorith for that starting vertx
     BF_result = GraphBellmanFordAlgExecute(g, startVertex);
-    for (unsigned int v = 0; v < numVertices; v++)
-    {
+    for (unsigned int v = 0; v < numVertices; v++){
       // check the distance of that vertice
       // printf("Vertice Starting: %d  Vertice Checking: %d \n", startVertex, v);
       int value = GraphBellmanFordAlgDistance(BF_result, v);
@@ -63,7 +62,6 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
     }
     GraphBellmanFordAlgDestroy(&BF_result);
   }
-  GraphBellmanFordAlgDestroy(&BF_result);
 
   return res;
 }

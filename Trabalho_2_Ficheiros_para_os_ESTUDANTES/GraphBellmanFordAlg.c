@@ -68,6 +68,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   result->predecessor = (int *)malloc(sizeof(int) * numVertices);
   result->marked = (unsigned int *)malloc(sizeof(unsigned int) * numVertices);
   result->distance = (int *)malloc(sizeof(int) * numVertices);
+  assert(result->predecessor != NULL && result->marked != NULL && result->distance != NULL);
 
   // create an array if the vertex to iterate always starting in the staring vertex
   unsigned int vertices[numVertices];
@@ -95,6 +96,10 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   // if the graph doesn have any edge return and avoid wasting time
   if (numEdges == 0)
   {
+    free(result->predecessor);
+    free(result->marked);
+    free(result->distance);
+    free(result);
     return result;
   }
 
@@ -107,11 +112,10 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
 
   for (unsigned int j = 0; j < numVertices - 1; j++)
   {
-
+    // first time lopping will always be in the startVertex
     unChange = 0;
     for (unsigned int v = 0; v < numVertices; v++)
     {
-      // first time lopping will always be in the startVertex
       vertice = vertices[v];
       // printf("Using the vertice: %d \n", vertice);
       //  if there is no path to this vertice skip iteracion
@@ -142,13 +146,14 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
           result->distance[idAdjacentVertice] = result->distance[vertice] + 1;
         }
       }
+      free(adjantesinfo);
     }
-    free(adjantesinfo);
     if (unChange == 0)
     {
       break;
     }
   }
+
   return result;
 }
 
