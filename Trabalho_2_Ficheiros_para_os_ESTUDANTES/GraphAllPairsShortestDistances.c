@@ -38,34 +38,57 @@ GraphAllPairsShortestDistances *GraphAllPairsShortestDistancesExecute(
   assert(g != NULL);
 
   GraphAllPairsShortestDistances *result = (GraphAllPairsShortestDistances *)malloc(sizeof(GraphAllPairsShortestDistances));
+  if (result == NULL){
+    return NULL;
+  }
 
   unsigned int numbVertex = GraphGetNumVertices(g);
   result->graph = g;
+
+  // Allocate memory for the distance matriz
   result->distance = (int **)malloc(numbVertex * sizeof(int *));
-  if (result->distance == NULL)
-  {
-    GraphAllPairsShortestDistancesDestroy(&result);
+  if (result->distance == NULL){
+    free(result);
     return NULL;
   }
 
-  GraphBellmanFordAlg *BFGrpah;
-  if (BFGrpah == NULL)
-  {
-    GraphAllPairsShortestDistancesDestroy(&result);
-    return NULL;
+  // Initialize the distance matrix rows
+  for (unsigned int i = 0; i < numbVertex; i++){
+      result->distance[i] = (int *)malloc(numbVertex * sizeof(int));
+      if (result->distance[i] == NULL){
+          // Free previously allocated rows and the result structure
+          for (unsigned int j = 0; j < i; j++){
+              free(result->distance[j]);
+          }
+          free(result->distance);
+          free(result);
+          return NULL;
+      }
   }
 
-  for (unsigned int startingVertex = 0; startingVertex < numbVertex; startingVertex++)
-  {
+  GraphBellmanFordAlg *BFGraph = NULL;
+
+  for (unsigned int startingVertex = 0; startingVertex < numbVertex; startingVertex++){
     // CREATE THE SHORTS PATH FOR EVERY VERTICE
-    BFGrpah = GraphBellmanFordAlgExecute(g, startingVertex);
-    result->distance[startingVertex] = (int *)malloc(numbVertex * sizeof(int));
-    for (unsigned int v = 0; v < numbVertex; v++)
-    {
-      // get the distance
-      result->distance[startingVertex][v] = GraphBellmanFordAlgDistance(BFGrpah, v);
+    BFGraph = GraphBellmanFordAlgExecute(g, startingVertex);
+    if (BFGraph == NULL){
+            // Free memory and return NULL in case of failure
+            for (unsigned int i = 0; i < numbVertex; i++){
+                free(result->distance[i]);
+            }
+            free(result->distance);
+            free(result);
+            return NULL;
     }
-    GraphBellmanFordAlgDestroy(&BFGrpah);
+
+    // Store the distances in the matriz
+    for (unsigned int v = 0; v < numbVertex; v++){
+      // get the distance
+      result->distance[startingVertex][v] = GraphBellmanFordAlgDistance(BFGraph, v);
+    }
+
+    // Free the memory allocated for the Bellman-Ford algorithm result
+    GraphBellmanFordAlgDestroy(&BFGraph);
   }
 
   return result;
