@@ -13,6 +13,8 @@ int main(void)
     {
         Graph *dig01 = GraphCreate(numVertice, 1, 0);
 
+        GraphCheckInvariants(dig01);
+
         for (int v = 0; v < numVertice; v++)
         {
             for (int edgge = 0; edgge < numVertice; edgge++)
@@ -28,15 +30,13 @@ int main(void)
 
         // Consider each vertex as a start vertex
 
-        GraphBellmanFordAlg *BF_result = GraphBellmanFordAlgExecute(dig01, 0);
-
+        Graph *BF_result = GraphComputeTransitiveClosure(dig01, 0);
         printf("Numero de vertices: %d\n", numVertice);
-        printf("Numero de iterações :%d \n", InstrCount[0]);
-        printf("Numero de Altea~çoes de distancia :%d \n", InstrCount[1]);
+        printf("Numero de iterações :%d \n", InstrCount[3]);
+        printf("Numero de Altea~çoes de distancia :%d \n", InstrCount[4]);
+
         InstrPrint();
         printf("\n");
-
-        GraphBellmanFordAlgDestroy(&BF_result);
 
         GraphDestroy(&dig01);
     }

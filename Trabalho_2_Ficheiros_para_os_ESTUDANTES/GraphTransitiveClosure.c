@@ -23,6 +23,9 @@
 #include "GraphBellmanFordAlg.h"
 #include "instrumentation.h"
 #define InstrName [0] = "COUNTITERATIONS";
+#define InstrName [3] = "COUNTITERATIONSClousre";
+#define InstrName [1] = "CHANGEDISTANCE";
+#define InstrName [4] = "CHANGEDISTANCEClousure";
 
 // Compute the transitive closure of a directed graph
 // Return the computed transitive closure as a directed graph
@@ -60,7 +63,8 @@ Graph *GraphComputeTransitiveClosure(Graph *g)
       int value = GraphBellmanFordAlgDistance(BF_result, v);
       // printf("Value: %d\n", value);
       //  check if the distance is grater than 0
-      InstrCount[0]++;
+      InstrCount[3] += InstrCount[0];
+      InstrCount[4] += InstrCount[1];
 
       if (value > 0)
       {

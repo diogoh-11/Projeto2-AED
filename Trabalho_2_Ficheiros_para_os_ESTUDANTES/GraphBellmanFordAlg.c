@@ -32,6 +32,7 @@ struct _GraphBellmanFordAlg
   unsigned int startVertex; // The root of the shortest-paths tree
 };
 #define InstrName [0] = "COUNTITERATIONS";
+#define InstrName [1] = "CHANGEDISTANCE";
 
 GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
                                                 unsigned int startVertex)
@@ -96,11 +97,7 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
   // if the graph doesn have any edge return and avoid wasting time
   if (numEdges == 0)
   {
-    free(result->predecessor);
-    free(result->marked);
-    free(result->distance);
-    free(result);
-    return NULL;
+    return result;
   }
 
   // variables that will be needed
@@ -146,13 +143,13 @@ GraphBellmanFordAlg *GraphBellmanFordAlgExecute(Graph *g,
           result->predecessor[idAdjacentVertice] = vertice;
           unChange = 1;
           result->distance[idAdjacentVertice] = result->distance[vertice] + 1;
+          InstrCount[1]++;
         }
       }
       free(adjantesinfo);
     }
     if (unChange == 0)
     {
-      InstrCount[0]++;
       break;
     }
   }
